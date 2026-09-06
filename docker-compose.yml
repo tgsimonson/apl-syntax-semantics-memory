@@ -1,0 +1,18 @@
+# Alternative to the Makefile:
+#   docker compose run --rm apl ./run_all.sh    full run, output to terminal
+#   docker compose run --rm apl                 interactive shell
+#
+# Sources are baked into the image by the Dockerfile's COPY, so no volume is
+# mounted here: the run is hermetic and needs no Docker file sharing. Rebuild
+# after editing a source file (docker compose build).
+services:
+  apl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    platform: linux/arm64
+    image: apl-env
+    working_dir: /work
+    stdin_open: true
+    tty: true
+    command: /bin/bash
