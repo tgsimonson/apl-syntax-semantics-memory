@@ -1,5 +1,11 @@
 # Report corrections
 
+**Status: applied to the report on 2026-09-06.** Paragraph 1 (environment and
+provenance), Figures 13, 14, 15 and 16, Table 3 and its caption, and the peak
+memory discussion have all been updated in
+`syntax-semantics-memory-report.docx`. This file remains as the record of what
+changed and why. Figures 7-9 needed no change; see below.
+
 Every figure below comes from `logs/full_run_linux.txt`, the authoritative run
 (native arm64 Ubuntu 24.04 container, Valgrind working). `logs/full_run_macos.txt`
 is the secondary Apple Clang artifact. The report's current figures come from an
