@@ -8,10 +8,8 @@ here was compiled and executed; the captured output is in `logs/`.
 | Log | Platform | Status |
 |---|---|---|
 | `logs/full_run_linux.txt` | Ubuntu 24.04, arm64, in the container | **Authoritative.** All numbers in the report come from this run. |
-| `logs/full_run_macos.txt` | macOS on Apple Silicon, Apple Clang | Secondary. Kept because the Clang diagnostics differ from g++ in a way the report analyzes. |
+| `logs/full_run_macos.txt` | macOS on Apple Silicon, Apple Clang | Secondary. Kept as a cross-compiler comparison: Apple Clang reports the same defects differently from g++, and it shows what the run looks like on a host where Valgrind cannot run. |
 
-`logs/CORRECTIONS.md` lists every figure in the written report that the
-authoritative run changes.
 
 Valgrind has no aarch64 Darwin port, so it cannot run natively on Apple Silicon
 at all. The assignment requires a memory profiling tool, so the authoritative
