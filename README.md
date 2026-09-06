@@ -8,7 +8,7 @@ here was compiled and executed; the captured output is in `logs/`.
 | Log | Platform | Status |
 |---|---|---|
 | `logs/full_run_linux.txt` | Ubuntu 24.04, arm64, in the container | **Authoritative.** All numbers in the report come from this run. |
-| `logs/full_run_macos.txt` | macOS on Apple Silicon, Apple Clang | Secondary. Kept as a cross-compiler comparison: Apple Clang reports the same defects differently from g++, and it shows what the run looks like on a host where Valgrind cannot run. |
+| `logs/full_run_macos.txt` | macOS on Apple Silicon, Apple Clang | Secondary. Source of the compiler-recovery comparison in Part 1 (Figure 8): Apple Clang reports the same missing semicolon once, where g++ reports it twice. |
 
 
 Valgrind has no aarch64 Darwin port, so it cannot run natively on Apple Silicon
