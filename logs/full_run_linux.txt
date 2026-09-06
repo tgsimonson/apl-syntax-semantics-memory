@@ -1,0 +1,272 @@
+
+========== TOOLCHAIN ==========
+captured:      2026-09-06 19:40:48 UTC
+host:          Linux 6.12.76-linuxkit aarch64
+distro:        Ubuntu 24.04.4 LTS
+python3:       Python 3.12.3
+node:          v22.23.2
+g++:           g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+javac:         javac 21.0.12
+java:          openjdk version "21.0.12" 2026-07-21
+rustc:         rustc 1.98.1 (48a229cea 2026-09-01)
+valgrind:      valgrind-3.22.0
+time -v:       available (GNU time), used as cross-check
+
+========== PART 1 SECTION 1: working baselines ==========
+Sum in Python: 15
+Sum in JavaScript: 15
+Sum in C++: 15
+
+========== PART 1 SECTION 1: Python syntax errors ==========
+--- part1/section1/broken/sum_err1_missing_colon.py
+  File "/work/part1/section1/broken/sum_err1_missing_colon.py", line 2
+    def calculate_sum(arr)
+                          ^
+SyntaxError: expected ':'
+--- part1/section1/broken/sum_err2_bad_indent.py
+  File "/work/part1/section1/broken/sum_err2_bad_indent.py", line 4
+    for num in arr:
+IndentationError: unexpected indent
+--- part1/section1/broken/sum_err3_undefined_name.py
+    result = calculate_sum(numbers)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/part1/section1/broken/sum_err3_undefined_name.py", line 3, in calculate_sum
+    total = o
+            ^
+NameError: name 'o' is not defined
+
+========== PART 1 SECTION 1: JavaScript syntax errors ==========
+--- part1/section1/broken/sum_err1_missing_brace.js
+/work/part1/section1/broken/sum_err1_missing_brace.js:13
+
+
+
+SyntaxError: Unexpected end of input
+    at wrapSafe (node:internal/modules/cjs/loader:1713:18)
+--- part1/section1/broken/sum_err2_space_in_identifier.js
+/work/part1/section1/broken/sum_err2_space_in_identifier.js:11
+let result = calculate Sum(numbers);
+                       ^^^
+
+SyntaxError: Unexpected identifier 'Sum'
+    at wrapSafe (node:internal/modules/cjs/loader:1713:18)
+--- part1/section1/broken/sum_err3_undefined_name.js
+/work/part1/section1/broken/sum_err3_undefined_name.js:3
+    let total = o;
+                ^
+
+ReferenceError: o is not defined
+    at calculateSum (/work/part1/section1/broken/sum_err3_undefined_name.js:3:17)
+
+========== PART 1 SECTION 1: C++ syntax errors ==========
+--- part1/section1/broken/sum_err1_missing_semicolon.cpp
+part1/section1/broken/sum_err1_missing_semicolon.cpp: In function 'int calculateSum(int*, int)':
+part1/section1/broken/sum_err1_missing_semicolon.cpp:7:5: error: expected ',' or ';' before 'for'
+    7 |     for (int i = 0; i < size; i++) {
+      |     ^~~
+part1/section1/broken/sum_err1_missing_semicolon.cpp:7:21: error: 'i' was not declared in this scope
+    7 |     for (int i = 0; i < size; i++) {
+      |                     ^
+--- part1/section1/broken/sum_err2_undeclared_id.cpp
+part1/section1/broken/sum_err2_undeclared_id.cpp: In function 'int calculateSum(int*, int)':
+part1/section1/broken/sum_err2_undeclared_id.cpp:6:17: error: 'o' was not declared in this scope
+    6 |     int total = o;
+      |                 ^
+--- part1/section1/broken/sum_err3_unterminated_string.cpp
+part1/section1/broken/sum_err3_unterminated_string.cpp:17:28: warning: missing terminating " character
+   17 |     cout << "Sum in C++: " " << result << endl;
+      |                            ^
+part1/section1/broken/sum_err3_unterminated_string.cpp:17:28: error: missing terminating " character
+   17 |     cout << "Sum in C++: " " << result << endl;
+      |                            ^~~~~~~~~~~~~~~~~~~~
+part1/section1/broken/sum_err3_unterminated_string.cpp: In function 'int main()':
+part1/section1/broken/sum_err3_unterminated_string.cpp:17:27: error: expected ';' before 'return'
+
+========== PART 1 SECTION 2: semantics demos ==========
+closures (late binding):   [2, 2, 2]
+closures (default arg):    [0, 1, 2]
+
+  rebind int to str      -> int
+  after rebinding        -> str
+  '5' + 3                -> TypeError: can only concatenate str (not "int") to str
+  5 + 3.0                -> 8.0
+
+2**63          = 9223372036854775808
+(2**63)**2     = 85070591730234615865843651857942052864
+(2**31-1)+1    = 2147483648
+closures (var): [ 3, 3, 3 ]
+closures (let): [ 0, 1, 2 ]
+
+  '5' + 3                -> "53"
+  '5' - 3                -> 2
+  [] + {}                -> "[object Object]"
+  1 == '1'               -> true
+  1 === '1'              -> false
+  typeof (5)             -> number
+  typeof ('five')        -> string
+
+MAX_SAFE_INTEGER      = 9007199254740991
+MAX_SAFE_INTEGER + 2  = 9007199254740992
+(2147483647|0) + 1    = 2147483648
+0.1 + 0.2             = 0.30000000000000004
+closures (capture by value [i]): 0 1 2 
+closures (capture by ref [&]):   2 2 2 
+
+  5 + 3.0 (int + double) -> 8.0  (result is 8 bytes: promoted to double)
+  int t = 3.99          -> 3  (silent truncation)
+  "5" + 3              -> rejected at compile time
+
+  INT_MAX               = 2147483647
+  UINT_MAX              = 4294967295
+  UINT_MAX + 1          = 0  (defined wraparound)
+  0.1 + 0.2             = 0.30000000000000004
+  sizeof(int)           = 4 bytes
+--- type_error.cpp (expected to fail) ---
+part1/section2/type_error.cpp: In function 'int main()':
+part1/section2/type_error.cpp:7:20: error: no match for 'operator+' (operand types are 'std::string' {aka 'std::__cxx11::basic_string<char>'} and 'int')
+    7 |     int result = s + n;   // no viable conversion
+      |                  ~ ^ ~
+      |                  |   |
+      |                  |   int
+      |                  std::string {aka std::__cxx11::basic_string<char>}
+In file included from /usr/include/c++/13/string:48,
+
+========== PART 2: C++ manual memory ==========
+timing build:    g++ -std=c++17 -g -O2
+profiling build: g++ -std=c++17 -g -O0   (see comment in run_all.sh)
+
+--- output of run 1 of 5 ---
+correct alloc/free of 200000 blocks, checksum 19999900000
+elapsed: 2 ms
+--- C++ manual_memory (-O2): 5 runs ---
+  run 1:  in-program 2 ms    wall     4.6 ms   peak RSS    2.9 MB
+  run 2:  in-program 2 ms    wall     4.2 ms   peak RSS    2.9 MB
+  run 3:  in-program 2 ms    wall     4.1 ms   peak RSS    2.9 MB
+  run 4:  in-program 2 ms    wall     4.1 ms   peak RSS    2.9 MB
+  run 5:  in-program 3 ms    wall     4.2 ms   peak RSS    2.9 MB
+  in-program elapsed:  median 2 ms   range 2-3 ms
+  wall clock:          median 4.2 ms   range 4.1-4.6 ms
+  peak RSS:            median 2.9 MB   range 2.9-2.9 MB   (max 2.9 MB)   via /usr/bin/time -v
+--- /usr/bin/time -v cross-check (C++) ---
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.00
+	Maximum resident set size (kbytes): 3012
+
+--- valgrind clean run ---
+==168==     in use at exit: 0 bytes in 0 blocks
+==168==   total heap usage: 200,002 allocs, 200,002 frees, 51,277,824 bytes allocated
+==168== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+--- valgrind --leak ---
+==170==     in use at exit: 1,024,000 bytes in 1,000 blocks
+==170== 1,024,000 bytes in 1,000 blocks are definitely lost in loss record 1 of 1
+==170==    at 0x4886FFC: operator new[](unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==170==    by 0x108CEB: leakMemory(int) (manual_memory.cpp:25)
+==170==    by 0x108E8F: main (manual_memory.cpp:46)
+==170== 
+==170==    definitely lost: 1,024,000 bytes in 1,000 blocks
+==170==    indirectly lost: 0 bytes in 0 blocks
+==170==      possibly lost: 0 bytes in 0 blocks
+==170== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+--- valgrind --dangle ---
+==174== Invalid read of size 4
+==174==    at 0x108D5C: danglingPointer() (manual_memory.cpp:35)
+==174==    by 0x108EEF: main (manual_memory.cpp:50)
+==174==  Address 0x51f0f80 is 0 bytes inside a block of size 4 free'd
+==174==    at 0x4888FC4: operator delete(void*, unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-arm64-linux.so)
+==174==    by 0x108D57: danglingPointer() (manual_memory.cpp:34)
+==174==    by 0x108EEF: main (manual_memory.cpp:50)
+==174== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+========== PART 2: Java garbage collection ==========
+java flags: -XX:+UseG1GC -Xlog:gc -Xmx512m
+
+--- output of run 1 of 5 ---
+[0.001s][info][gc] Using G1
+heap in use at start:      2 MB
+[0.023s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 24M->1M(64M) 0.872ms
+churned 200000 blocks, checksum 19999900000
+elapsed: 8 ms
+heap in use after churn:   31 MB
+[0.029s][info][gc] GC(1) Pause Full (System.gc()) 31M->1M(8M) 2.084ms
+heap in use after System.gc(): 1 MB
+[0.238s][info][gc] GC(2) Pause Young (Normal) (G1 Evacuation Pause) 5M->5M(10M) 2.569ms
+[0.240s][info][gc] GC(3) Pause Young (Concurrent Start) (G1 Evacuation Pause) 6M->6M(10M) 1.484ms
+[0.241s][info][gc] GC(4) Concurrent Mark Cycle
+[0.244s][info][gc] GC(5) Pause Young (Normal) (G1 Evacuation Pause) 8M->8M(12M) 2.469ms
+[0.247s][info][gc] GC(6) Pause Young (Normal) (G1 Evacuation Pause) 10M->9M(38M) 2.326ms
+[0.252s][info][gc] GC(4) Pause Remark 18M->18M(37M) 0.852ms
+[0.256s][info][gc] GC(7) Pause Young (Normal) (G1 Evacuation Pause) 18M->18M(37M) 3.576ms
+[0.262s][info][gc] GC(8) Pause Full (System.gc()) 21M->21M(37M) 5.335ms
+[0.262s][info][gc] GC(4) Concurrent Mark Cycle 21.618ms
+heap after retaining 20000 blocks (post-gc): 21 MB
+retained list size: 20000  (still reachable, so not collectable)
+[0.481s][info][gc] GC(9) Pause Full (System.gc()) 21M->1M(10M) 3.230ms
+heap after clearing references (post-gc): 1 MB
+--- Java MemoryDemo (G1): 5 runs ---
+  run 1:  in-program 8 ms    wall   693.7 ms   peak RSS   74.6 MB
+  run 2:  in-program 12 ms   wall   717.8 ms   peak RSS   74.6 MB
+  run 3:  in-program 12 ms   wall   738.1 ms   peak RSS   74.7 MB
+  run 4:  in-program 13 ms   wall   739.9 ms   peak RSS   74.7 MB
+  run 5:  in-program 13 ms   wall   731.3 ms   peak RSS   74.8 MB
+  in-program elapsed:  median 12 ms   range 8-13 ms
+  wall clock:          median 731.3 ms   range 693.7-739.9 ms
+  peak RSS:            median 74.7 MB   range 74.6-74.8 MB   (max 74.8 MB)   via /usr/bin/time -v
+
+========== PART 2: Rust ownership and borrowing ==========
+--- output of run 1 of 5 ---
+owned alloc/free of 200000 blocks, checksum 19999900000
+elapsed: 10 ms
+
+move semantics:
+  after move, b = "owned data"
+
+borrow checker:
+  immutable borrows: 3 3
+  after mutable borrow: [1, 2, 3, 4]
+
+deterministic drop order:
+  inner scope active
+  dropping inner
+  back in outer scope
+  dropping outer
+  main continues after both drops
+--- Rust main.rs (-O): 5 runs ---
+  run 1:  in-program 10 ms   wall    12.3 ms   peak RSS    1.6 MB
+  run 2:  in-program 10 ms   wall    11.7 ms   peak RSS    1.6 MB
+  run 3:  in-program 10 ms   wall    11.7 ms   peak RSS    1.6 MB
+  run 4:  in-program 10 ms   wall    11.7 ms   peak RSS    1.6 MB
+  run 5:  in-program 10 ms   wall    11.8 ms   peak RSS    1.6 MB
+  in-program elapsed:  median 10 ms   range 10-10 ms
+  wall clock:          median 11.7 ms   range 11.7-12.3 ms
+  peak RSS:            median 1.6 MB   range 1.6-1.6 MB   (max 1.6 MB)   via /usr/bin/time -v
+
+--- use_after_move.rs (expected to fail) ---
+error[E0382]: borrow of moved value: `a`
+ --> part2/rust/use_after_move.rs:5:20
+  |
+3 |     let a = String::from("owned data");
+  |         - move occurs because `a` has type `String`, which does not implement the `Copy` trait
+4 |     let b = a;                 // ownership moves out of a
+  |             - value moved here
+5 |     println!("{}", a);         // error: borrow of moved value
+  |                    ^ value borrowed here after move
+  |
+help: consider cloning the value if the performance cost is acceptable
+  |
+4 |     let b = a.clone();                 // ownership moves out of a
+  |              ++++++++
+--- dangling_ref.rs (expected to fail) ---
+error[E0106]: missing lifetime specifier
+ --> part2/rust/dangling_ref.rs:2:16
+  |
+2 | fn dangle() -> &String {
+  |                ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+help: consider using the `'static` lifetime, but this is uncommon unless you're returning a borrowed value from a `const` or a `static`
+  |
+2 | fn dangle() -> &'static String {
+
+========== END OF RUN ==========
+valgrind present: this is an authoritative run.

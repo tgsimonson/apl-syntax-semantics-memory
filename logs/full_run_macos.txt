@@ -1,0 +1,248 @@
+
+========== TOOLCHAIN ==========
+captured:      2026-09-06 19:38:27 UTC
+host:          Darwin 25.5.0 arm64
+distro:        macOS 26.5.1 (Apple M1)
+python3:       Python 3.14.6
+node:          v24.18.0
+g++:           Apple clang version 21.0.0 (clang-2100.1.1.101)
+javac:         javac 21.0.2
+java:          java version "21.0.2" 2024-01-16 LTS
+rustc:         rustc 1.97.1 (8bab26f4f 2026-07-14) (Homebrew)
+valgrind:      NOT INSTALLED
+
+  *** WARNING: THIS LOG IS NOT AUTHORITATIVE ***
+  Run with --no-valgrind on a host with no memory profiler. The three
+  valgrind sections below are absent, not passing. The canonical run is
+  the arm64 Linux container (make run).
+time -v:       unavailable; peak RSS comes from getrusage(2) via tools/bench.py
+
+========== PART 1 SECTION 1: working baselines ==========
+Sum in Python: 15
+Sum in JavaScript: 15
+Sum in C++: 15
+
+========== PART 1 SECTION 1: Python syntax errors ==========
+--- part1/section1/broken/sum_err1_missing_colon.py
+  File "/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err1_missing_colon.py", line 2
+    def calculate_sum(arr)
+                          ^
+SyntaxError: expected ':'
+--- part1/section1/broken/sum_err2_bad_indent.py
+  File "/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err2_bad_indent.py", line 4
+    for num in arr:
+IndentationError: unexpected indent
+--- part1/section1/broken/sum_err3_undefined_name.py
+  File "/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err3_undefined_name.py", line 9, in <module>
+    result = calculate_sum(numbers)
+  File "/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err3_undefined_name.py", line 3, in calculate_sum
+    total = o
+            ^
+NameError: name 'o' is not defined
+
+========== PART 1 SECTION 1: JavaScript syntax errors ==========
+--- part1/section1/broken/sum_err1_missing_brace.js
+/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err1_missing_brace.js:13
+
+
+
+SyntaxError: Unexpected end of input
+    at wrapSafe (node:internal/modules/cjs/loader:1804:18)
+--- part1/section1/broken/sum_err2_space_in_identifier.js
+/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err2_space_in_identifier.js:11
+let result = calculate Sum(numbers);
+                       ^^^
+
+SyntaxError: Unexpected identifier 'Sum'
+    at wrapSafe (node:internal/modules/cjs/loader:1804:18)
+--- part1/section1/broken/sum_err3_undefined_name.js
+/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err3_undefined_name.js:3
+    let total = o;
+                ^
+
+ReferenceError: o is not defined
+    at calculateSum (/Users/dev/Documents/Education/Institutions/UC/Computer Science/MSCS 632 - Advanced Programming Languages/apl-assignment/part1/section1/broken/sum_err3_undefined_name.js:3:17)
+
+========== PART 1 SECTION 1: C++ syntax errors ==========
+--- part1/section1/broken/sum_err1_missing_semicolon.cpp
+part1/section1/broken/sum_err1_missing_semicolon.cpp:6:18: error: expected ';' at end of declaration
+    6 |     int total = 0
+      |                  ^
+      |                  ;
+1 error generated.
+--- part1/section1/broken/sum_err2_undeclared_id.cpp
+part1/section1/broken/sum_err2_undeclared_id.cpp:6:17: error: use of undeclared identifier 'o'
+    6 |     int total = o;
+      |                 ^
+1 error generated.
+--- part1/section1/broken/sum_err3_unterminated_string.cpp
+part1/section1/broken/sum_err3_unterminated_string.cpp:17:28: warning: missing terminating '"' character [-Winvalid-pp-token]
+   17 |     cout << "Sum in C++: " " << result << endl;
+      |                            ^
+part1/section1/broken/sum_err3_unterminated_string.cpp:17:27: error: expected ';' after expression
+   17 |     cout << "Sum in C++: " " << result << endl;
+      |                           ^
+      |                           ;
+part1/section1/broken/sum_err3_unterminated_string.cpp:17:28: error: expected expression
+
+========== PART 1 SECTION 2: semantics demos ==========
+closures (late binding):   [2, 2, 2]
+closures (default arg):    [0, 1, 2]
+
+  rebind int to str      -> int
+  after rebinding        -> str
+  '5' + 3                -> TypeError: can only concatenate str (not "int") to str
+  5 + 3.0                -> 8.0
+
+2**63          = 9223372036854775808
+(2**63)**2     = 85070591730234615865843651857942052864
+(2**31-1)+1    = 2147483648
+closures (var): [ 3, 3, 3 ]
+closures (let): [ 0, 1, 2 ]
+
+  '5' + 3                -> "53"
+  '5' - 3                -> 2
+  [] + {}                -> "[object Object]"
+  1 == '1'               -> true
+  1 === '1'              -> false
+  typeof (5)             -> number
+  typeof ('five')        -> string
+
+MAX_SAFE_INTEGER      = 9007199254740991
+MAX_SAFE_INTEGER + 2  = 9007199254740992
+(2147483647|0) + 1    = 2147483648
+0.1 + 0.2             = 0.30000000000000004
+closures (capture by value [i]): 0 1 2 
+closures (capture by ref [&]):   2 2 2 
+
+  5 + 3.0 (int + double) -> 8.0  (result is 8 bytes: promoted to double)
+  int t = 3.99          -> 3  (silent truncation)
+  "5" + 3              -> rejected at compile time
+
+  INT_MAX               = 2147483647
+  UINT_MAX              = 4294967295
+  UINT_MAX + 1          = 0  (defined wraparound)
+  0.1 + 0.2             = 0.30000000000000004
+  sizeof(int)           = 4 bytes
+--- type_error.cpp (expected to fail) ---
+part1/section2/type_error.cpp:7:20: error: invalid operands to binary expression ('std::string' (aka 'basic_string<char>') and 'int')
+    7 |     int result = s + n;   // no viable conversion
+      |                  ~ ^ ~
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:3764:1: note: candidate template ignored: deduced conflicting types for parameter '_CharT' ('char' vs. 'int')
+ 3764 | operator+(const basic_string<_CharT, _Traits, _Allocator>& __lhs, _CharT __rhs) {
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string:3827:1: note: candidate template ignored: deduced conflicting types for parameter '_CharT' ('char' vs. 'int')
+ 3827 | operator+(basic_string<_CharT, _Traits, _Allocator>&& __lhs, _CharT __rhs) {
+
+========== PART 2: C++ manual memory ==========
+timing build:    g++ -std=c++17 -g -O2
+profiling build: g++ -std=c++17 -g -O0   (see comment in run_all.sh)
+
+--- output of run 1 of 5 ---
+correct alloc/free of 200000 blocks, checksum 19999900000
+elapsed: 9 ms
+--- C++ manual_memory (-O2): 5 runs ---
+  run 1:  in-program 9 ms    wall   321.8 ms   peak RSS    1.3 MB
+  run 2:  in-program 10 ms   wall    13.1 ms   peak RSS    1.3 MB
+  run 3:  in-program 10 ms   wall    14.9 ms   peak RSS    1.3 MB
+  run 4:  in-program 8 ms    wall    11.6 ms   peak RSS    1.3 MB
+  run 5:  in-program 7 ms    wall    10.5 ms   peak RSS    1.3 MB
+  in-program elapsed:  median 9 ms   range 7-10 ms
+  wall clock:          median 13.1 ms   range 10.5-321.8 ms
+  peak RSS:            median 1.3 MB   range 1.3-1.3 MB   (max 1.3 MB)   via getrusage(2) fallback
+
+--- valgrind clean run ---   SKIPPED: valgrind not installed on this host
+--- valgrind --leak ---      SKIPPED: valgrind not installed on this host
+--- valgrind --dangle ---    SKIPPED: valgrind not installed on this host
+
+========== PART 2: Java garbage collection ==========
+java flags: -XX:+UseG1GC -Xlog:gc -Xmx512m
+
+--- output of run 1 of 5 ---
+[0.003s][info][gc] Using G1
+heap in use at start:      2 MB
+[0.028s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 24M->1M(130M) 0.456ms
+churned 200000 blocks, checksum 19999900000
+elapsed: 15 ms
+heap in use after churn:   31 MB
+[0.050s][info][gc] GC(1) Pause Full (System.gc()) 31M->1M(14M) 9.111ms
+heap in use after System.gc(): 2 MB
+[0.266s][info][gc] GC(2) Pause Young (Normal) (G1 Evacuation Pause) 9M->8M(20M) 2.746ms
+[0.268s][info][gc] GC(3) Pause Young (Concurrent Start) (G1 Evacuation Pause) 10M->10M(20M) 1.224ms
+[0.268s][info][gc] GC(4) Concurrent Mark Cycle
+[0.269s][info][gc] GC(5) Pause Young (Normal) (G1 Evacuation Pause) 12M->12M(20M) 0.882ms
+[0.271s][info][gc] GC(6) Pause Young (Normal) (G1 Evacuation Pause) 14M->14M(75M) 1.027ms
+[0.273s][info][gc] GC(4) Pause Remark 18M->18M(70M) 0.246ms
+[0.280s][info][gc] GC(7) Pause Full (System.gc()) 21M->21M(70M) 5.031ms
+[0.280s][info][gc] GC(4) Concurrent Mark Cycle 12.001ms
+heap after retaining 20000 blocks (post-gc): 21 MB
+retained list size: 20000  (still reachable, so not collectable)
+[0.496s][info][gc] GC(8) Pause Full (System.gc()) 22M->1M(10M) 3.711ms
+heap after clearing references (post-gc): 1 MB
+--- Java MemoryDemo (G1): 5 runs ---
+  run 1:  in-program 15 ms   wall   729.5 ms   peak RSS   74.2 MB
+  run 2:  in-program 11 ms   wall   732.9 ms   peak RSS   74.3 MB
+  run 3:  in-program 10 ms   wall   707.8 ms   peak RSS   74.3 MB
+  run 4:  in-program 9 ms    wall   699.5 ms   peak RSS   74.2 MB
+  run 5:  in-program 10 ms   wall   729.8 ms   peak RSS   74.1 MB
+  in-program elapsed:  median 10 ms   range 9-15 ms
+  wall clock:          median 729.5 ms   range 699.5-732.9 ms
+  peak RSS:            median 74.2 MB   range 74.1-74.3 MB   (max 74.3 MB)   via getrusage(2) fallback
+
+========== PART 2: Rust ownership and borrowing ==========
+--- output of run 1 of 5 ---
+owned alloc/free of 200000 blocks, checksum 19999900000
+elapsed: 17 ms
+
+move semantics:
+  after move, b = "owned data"
+
+borrow checker:
+  immutable borrows: 3 3
+  after mutable borrow: [1, 2, 3, 4]
+
+deterministic drop order:
+  inner scope active
+  dropping inner
+  back in outer scope
+  dropping outer
+  main continues after both drops
+--- Rust main.rs (-O): 5 runs ---
+  run 1:  in-program 17 ms   wall   273.2 ms   peak RSS    1.5 MB
+  run 2:  in-program 9 ms    wall    13.3 ms   peak RSS    1.5 MB
+  run 3:  in-program 10 ms   wall    14.0 ms   peak RSS    1.5 MB
+  run 4:  in-program 9 ms    wall    13.6 ms   peak RSS    1.5 MB
+  run 5:  in-program 8 ms    wall    11.5 ms   peak RSS    1.5 MB
+  in-program elapsed:  median 9 ms   range 8-17 ms
+  wall clock:          median 13.6 ms   range 11.5-273.2 ms
+  peak RSS:            median 1.5 MB   range 1.5-1.5 MB   (max 1.5 MB)   via getrusage(2) fallback
+
+--- use_after_move.rs (expected to fail) ---
+error[E0382]: borrow of moved value: `a`
+ --> part2/rust/use_after_move.rs:5:20
+  |
+3 |     let a = String::from("owned data");
+  |         - move occurs because `a` has type `String`, which does not implement the `Copy` trait
+4 |     let b = a;                 // ownership moves out of a
+  |             - value moved here
+5 |     println!("{}", a);         // error: borrow of moved value
+  |                    ^ value borrowed here after move
+  |
+help: consider cloning the value if the performance cost is acceptable
+  |
+4 |     let b = a.clone();                 // ownership moves out of a
+  |              ++++++++
+--- dangling_ref.rs (expected to fail) ---
+error[E0106]: missing lifetime specifier
+ --> part2/rust/dangling_ref.rs:2:16
+  |
+2 | fn dangle() -> &String {
+  |                ^ expected named lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is no value for it to be borrowed from
+help: consider using the `'static` lifetime, but this is uncommon unless you're returning a borrowed value from a `const` or a `static`
+  |
+2 | fn dangle() -> &'static String {
+
+========== END OF RUN ==========
+valgrind ABSENT: this log is a secondary artifact, not authoritative.
